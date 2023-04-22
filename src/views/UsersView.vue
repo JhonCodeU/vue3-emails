@@ -1,6 +1,14 @@
 <template>
   <div class="container mx-auto py-6">
-    <h2 class="text-xl font-bold mb-4">Tabla de Usuarios</h2>
+    <div class="flex justify-between items-center mb-4">
+      <h2 class="text-xl font-bold mb-4">Tabla de Usuarios</h2>
+      <button
+        @click="showModal = true"
+        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+      >
+        Crear usuario
+      </button>
+    </div>
     <div class="w-full overflow-x-auto">
       <table class="min-w-full text-center text-sm font-light">
         <thead
@@ -28,12 +36,6 @@
                 @click="editUser(user)"
               >
                 Editar
-              </button>
-              <button
-                @click="showModal = true"
-                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-              >
-                Crear usuario
               </button>
               <button
                 class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded ml-2"
@@ -103,6 +105,7 @@ export default {
       showModal: false,
       isEdit: false,
       user: {
+        _id: '',
         name: '',
         password: '',
         role: ''
@@ -129,32 +132,28 @@ export default {
     this.users = await userController.getUsers()
   },
   methods: {
-    editUser(user) {
-      if (user) {
-        this.showModal = true
-        this.isEdit = true
-        this.titleModal = `Editar usuario ${user.name}`
-        this.user.name = user.name
-        this.user.role = user.role
-      }
+    async editUser(user) {
+      this.showModal = true
+      this.isEdit = true
+      this.titleModal = `Editar usuario ${this.user.name}`
+      this.user = { ...user }
     },
     createUser() {
-      // Lógica para crear un nuevo usuario
       this.isEdit = false
-      console.log('Creando usuario')
-      console.log(this.user)
     },
     async deleteUser(id) {
       const resp = await userController.deleteUser(id)
       console.log(resp)
       this.users = await userController.getUsers()
     },
-    submit() {
+    async submit() {
       if (this.titleModal === 'Crear usuario') {
-        this.createUser()
+        await userController.createUser(this.user)
       } else {
-        this.editUser()
+        await userController.updateUser(this.user)
       }
+      this.showModal = false
+      this.users = await userController.getUsers()
     },
     formatDate(date) {
       // Función para formatear la fecha y hora en formato legible
