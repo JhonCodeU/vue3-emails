@@ -36,95 +36,77 @@
           </tr>
         </thead>
         <tbody class="bg-white divide-y divide-gray-200">
-          <tr v-for="(email, index) in emails" :key="index" @click="selectedEmail = email">
+          <tr
+            v-for="({ _source: email }, index) in emails"
+            :key="index"
+            @click="selectedEmail = email"
+          >
             <td class="px-6 py-4 whitespace-nowrap">
-              <div class="text-sm text-gray-900">{{ email.subject }}</div>
-              <div class="text-sm text-gray-500">{{ email.date }}</div>
+              <div class="text-sm text-gray-900">{{ email.Subject }}</div>
+              <div class="text-sm text-gray-500">{{ email.Date }}</div>
             </td>
             <td class="px-6 py-4 whitespace-nowrap">
-              <div class="text-sm text-gray-900">{{ email.from }}</div>
-              <div class="text-sm text-gray-500">{{ email.fromEmail }}</div>
+              <div class="text-sm text-gray-900">{{ email['X-Origin'] }}</div>
+              <div class="text-sm text-gray-500">{{ email.From }}</div>
             </td>
             <td class="px-6 py-4 whitespace-nowrap">
-              <div class="text-sm text-gray-900">{{ email.to }}</div>
-              <div class="text-sm text-gray-500">{{ email.toEmail }}</div>
+              <div class="text-sm text-gray-900">{{ email['X-To'] }}</div>
+              <div class="text-sm text-gray-500">{{ email.To }}</div>
             </td>
           </tr>
         </tbody>
       </table>
     </div>
     <div v-if="selectedEmail">
-      <h2 class="text-lg font-medium mb-4">{{ selectedEmail.subject }}</h2>
+      <h2 class="text-lg font-medium mb-4">{{ selectedEmail.Subject }}</h2>
       <div class="flex items-center mb-4">
         <div class="bg-gray-200 rounded-full w-12 h-12 flex items-center justify-center mr-4">
-          {{ selectedEmail.from.charAt(0).toUpperCase() }}
+          {{ selectedEmail.From.charAt(0).toUpperCase() }}
         </div>
         <div>
-          <div class="text-gray-900 font-medium">{{ selectedEmail.from }}</div>
-          <div class="text-gray-500">{{ selectedEmail.fromEmail }}</div>
+          <div class="text-gray-900 font-medium">{{ selectedEmail.From }}</div>
+          <div class="text-gray-500">{{ selectedEmail['X-Origin'] }}</div>
         </div>
       </div>
       <div class="border-t border-gray-200 py-4">
         <div class="text-sm font-medium text-gray-500">To</div>
 
-        <div class="text-gray-900">{{ selectedEmail.to }}</div>
-        <div class="text-gray-500">{{ selectedEmail.toEmail }}</div>
+        <div class="text-gray-900">{{ selectedEmail['X-To'] }}</div>
+        <div class="text-gray-500">{{ selectedEmail.To }}</div>
       </div>
       <div class="border-t border-gray-200 py-4">
         <div class="text-sm font-medium text-gray-500">Message</div>
-        <div class="mt-2 text-gray-900">{{ selectedEmail.message }}</div>
+        <div class="mt-2 text-gray-900">{{ selectedEmail.Body }}</div>
       </div>
     </div>
+    Total emails: {{ totalEmailsCount }}
   </div>
 </template>
 <script>
 import TitleComponent from '@/components/TitleComponent.vue'
-import EmailController from '../controllers/emails.controller'
+import EmailController from '../controllers/email.controller'
+import { mapGetters } from 'vuex'
 export default {
   name: 'HomeView',
   components: {
     TitleComponent
   },
+  computed: {
+    ...mapGetters(['totalEmails', 'allEmails']),
+    totalEmailsCount() {
+      return this.totalEmails
+    }
+  },
   data() {
     return {
-      emails: [
-        {
-          subject: 'Hello',
-          from: 'John Smith',
-          fromEmail: 'john@example.com',
-          to: 'Jane Doe',
-          toEmail: 'jane@example.com',
-          date: 'April 19, 2023',
-          message:
-            'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam bibendum tellus sed magna dictum, sed posuere lorem auctor. Proin non felis vitae odio iaculis interdum.'
-        },
-        {
-          subject: 'Meeting tomorrow',
-          from: 'Alice Brown',
-          fromEmail: 'alice@example.com',
-          to: 'Bob Johnson',
-          toEmail: 'bob@example.com',
-          date: 'April 20, 2023',
-          message:
-            'Maecenas pharetra arcu in nisi venenatis, non varius quam tempor. Ut a augue non quam pharetra faucibus vel a orci.'
-        },
-        {
-          subject: 'Vacation time',
-          from: 'Mary Green',
-          fromEmail: 'mary@example.com',
-          to: 'David Lee',
-          toEmail: 'david@example.com',
-          date: 'April 18, 2023',
-          message:
-            'Integer sed sagittis nisi, vel sodales sapien. Sed vel nulla tincidunt, tempus ex vitae, interdum tortor.'
-        }
-      ],
+      emails: [],
       selectedEmail: null
     }
   },
   async created() {
-    const emails = await EmailController.getAllEmails()
-    console.log(emails)
+    await EmailController.getAllEmails()
+    this.emails = this.allEmails
+    console.log(this.emails)
   }
 }
 </script>

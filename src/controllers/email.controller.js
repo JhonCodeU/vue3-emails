@@ -1,4 +1,5 @@
 import axios from "../config/axios";
+import store from "../store";
 
 const EmailController = {
   getAllEmails: async () => {
@@ -11,12 +12,15 @@ const EmailController = {
           "field": "_all"
         },
         "from": 0,
-        "max_results": 1000
+        "max_results": 100
       }
 
       const { data } = await axios.post("/emails/search_all", query);
-      const { hits, total } = data;
-      return hits;
+      const { hits } = data;
+      const { hits: emails, total } = hits;
+
+      store.commit("setTotal", total.value);
+      store.commit("setEmails", emails);
     } catch (error) {
       console.log(error);
     }
