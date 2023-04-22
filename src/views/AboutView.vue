@@ -1,12 +1,9 @@
 <template>
   <div class="about">
-    <!--     <h1>This is an about page</h1> -->
-    <info-email />
+    <h1>This is an about page</h1>
   </div>
 </template>
-<script setup>
-import InfoEmail from '../components/email/InfoEmail.vue'
-</script>
+
 <style>
 @media (min-width: 1024px) {
   .about {

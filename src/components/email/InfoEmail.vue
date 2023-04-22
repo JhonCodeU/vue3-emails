@@ -3,48 +3,25 @@
   <div class="flex-1 px-2">
     <div class="mb-6">
       <h4 class="text-lg text-gray-800 font-bold pb-2 mb-4 border-b-2">
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit
+        {{ email.Subject }}
       </h4>
       <div class="flex items-center justify-between">
         <div class="flex items-center">
-          <img
-            src="https://vojislavd.com/ta-template-demo/assets/img/message3.jpg"
-            class="rounded-full w-8 h-8 border border-gray-500"
-          />
+          <div class="bg-gray-200 rounded-full w-12 h-12 flex items-center justify-center mr-4">
+            {{ email['X-Origin'].charAt(0).toUpperCase() }}
+          </div>
           <div class="flex flex-col ml-2">
-            <span class="text-sm font-semibold">Betty Garmon</span>
-            <span class="text-xs text-gray-400">From: bettygarmon@example.com</span>
+            <span class="text-sm font-semibold">{{ email['X-Origin'] }}</span>
+            <span class="text-xs text-gray-400">{{ email.From }}</span>
           </div>
         </div>
-        <span class="text-sm text-gray-500">Jan 30, 2022, 10:23 AM</span>
+        <span class="text-sm text-gray-500">{{ email.Date }}</span>
       </div>
       <div class="py-6 pl-2 text-gray-700">
         <p>Hi John!</p>
         <p class="mt-4">
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
-          ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation
-          ullamco laboris nisi ut aliquip ex ea commodo consequat.
+          {{ email.Body }}
         </p>
-        <p class="mt-4">
-          Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat
-          nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia
-          deserunt mollit anim id est laborum.
-        </p>
-        <p class="mt-4">Sed ut perspiciatis unde omnis iste natus error sit:</p>
-        <ul class="ml-12 list-disc">
-          <li>voluptatem accusantium</li>
-          <li>doloremque laudantium</li>
-          <li>totam rem aperiam</li>
-          <li>eaque ipsa quae ab illo inventore veritatis</li>
-          <li>quasi architecto</li>
-        </ul>
-        <p class="mt-4">
-          Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia
-          consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam
-          est, qui dolorem ipsum quia dolor sit amet, consectetur.
-        </p>
-        <p class="mt-4">Regards,</p>
-        <p>Betty Garmon</p>
       </div>
 
       <div class="mt-8 flex items-center space-x-4">
@@ -88,7 +65,18 @@
     </div>
   </div>
 </template>
-                    
+<script>
+export default {
+  name: 'InfoEmail',
+  props: {
+    email: {
+      type: Object,
+      required: true
+    }
+  }
+}
+</script>
+         
 <style>
 .cls-1,
 .cls-2 {

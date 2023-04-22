@@ -28,6 +28,7 @@
           <li>
             <a
               class="bg-gray-500 bg-opacity-30 text-blue-600 flex items-center justify-between py-1.5 px-4 rounded cursor-pointer"
+              @click="showTable = true"
             >
               <span class="flex items-center space-x-2">
                 <svg
@@ -456,30 +457,46 @@
           </div>
         </div>
       </div>
-      <!-- Table -->
+      <!-- Table or Info-->
       <TableComponent
+        v-if="showTable"
         :emails="emails"
-        @selectedEmail="selectedEmail = $event"
+        @selectedEmail="selectEmail"
         :displayedEmails="displayedEmails"
       />
+      <InfoEmail v-else :email="selectedEmail" />
     </div>
   </div>
 </template>
 <script>
 import TableComponent from './TableComponent.vue'
+import InfoEmail from './InfoEmail.vue'
 import EmailController from '../../controllers/email.controller'
 import { mapGetters } from 'vuex'
 export default {
   name: 'InboxGmail',
   components: {
-    TableComponent
+    TableComponent,
+    InfoEmail
+  },
+  props: {
+    search: {
+      type: String,
+      default: ''
+    }
   },
   computed: {
     ...mapGetters(['allEmails']),
     totalPages() {
+      if (!Array.isArray(this.emails)) {
+        return 0
+      }
       return Math.ceil(this.emails.length / this.pageSize)
     },
     displayedEmails() {
+      if (!Array.isArray(this.emails)) {
+        return []
+      }
       const start = (this.currentPage - 1) * this.pageSize
       const end = start + this.pageSize
       return this.emails.slice(start, end)
@@ -490,12 +507,21 @@ export default {
       emails: [],
       selectedEmail: null,
       currentPage: 1,
-      pageSize: 20
+      pageSize: 20,
+      showTable: true
+    }
+  },
+  watch: {
+    async search() {
+      this.currentPage = 1
+      await this.$store.dispatch('searchEmails', this.search)
+      this.emails = this.allEmails
     }
   },
   async created() {
     await EmailController.getAllEmails()
     this.emails = this.allEmails
+    console.log(this.emails)
   },
   methods: {
     Next() {
@@ -503,6 +529,10 @@ export default {
     },
     Previous() {
       this.currentPage--
+    },
+    selectEmail(email) {
+      this.selectedEmail = email
+      this.showTable = false
     }
   }
 }

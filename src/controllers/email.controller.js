@@ -25,6 +25,14 @@ const EmailController = {
       console.log(error);
     }
   }
+  ,
+  searchEmails: async () => {
+    try {
+      store.dispatch("searchEmails");
+    } catch (error) {
+      console.log(error);
+    }
+  }
 }
 
 export default EmailController;
