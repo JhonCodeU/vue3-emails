@@ -1,6 +1,6 @@
 <template>
-  <div class="grid grid-cols-2 gap-4">
-    <div class="col-span-2">
+  <div class="grid grid-cols-1 gap-4">
+    <div>
       <div class="flex justify-between mb-4">
         <TitleComponent />
         <div class="flex">
@@ -14,7 +14,7 @@
       </div>
     </div>
     <div>
-      <TableComponent :emails="emails" @selectedEmail="selectedEmail = $event" />
+      <InboxGmail />
     </div>
     <div>
       <InfoEmail :selectedEmail="selectedEmail" />
@@ -24,32 +24,21 @@
 </template>
 <script>
 import TitleComponent from '@/components/TitleComponent.vue'
-import EmailController from '../controllers/email.controller'
-import TableComponent from '../components/email/TableComponent.vue'
+import InboxGmail from '../components/email/InboxGmail.vue'
 import InfoEmail from '../components/email/InfoEmail.vue'
 import { mapGetters } from 'vuex'
 export default {
   name: 'HomeView',
   components: {
     TitleComponent,
-    TableComponent,
-    InfoEmail
+    InfoEmail,
+    InboxGmail
   },
   computed: {
-    ...mapGetters(['totalEmails', 'allEmails']),
+    ...mapGetters(['totalEmails']),
     totalEmailsCount() {
       return this.totalEmails
     }
-  },
-  data() {
-    return {
-      emails: [],
-      selectedEmail: null
-    }
-  },
-  async created() {
-    await EmailController.getAllEmails()
-    this.emails = this.allEmails
   }
 }
 </script>

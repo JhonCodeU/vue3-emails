@@ -12,7 +12,7 @@ const EmailController = {
           "field": "_all"
         },
         "from": 0,
-        "max_results": 100
+        "max_results": 1000
       }
 
       const { data } = await axios.post("/emails/search_all", query);
